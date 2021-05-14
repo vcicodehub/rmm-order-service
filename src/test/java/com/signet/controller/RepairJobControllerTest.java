@@ -7,10 +7,10 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootTest
 class DemoApplicationTests {
 
-	@Test
-	void testPing() {
-		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.getForObject("http://localhost:8080/signet/api/v1/ping", Object.class);
-	}
+	// @Test
+	// void testPing() {
+	// 	RestTemplate restTemplate = new RestTemplate();
+	// 	restTemplate.getForObject("http://localhost:8080/signet/api/v1/ping", Object.class);
+	// }
 
 }

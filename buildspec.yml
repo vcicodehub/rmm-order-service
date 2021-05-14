@@ -1,0 +1,22 @@
+version: 2.0
+env:
+  variables:
+    ECR_REPO: 415353467794.dkr.ecr.us-east-2.amazonaws.com
+phases:
+  pre_build:
+    commands:
+      - echo Entering the pre_build phase...
+      - $(aws ecr get-login --no-include-email --region us-east-2)
+  build:
+    commands:
+      - echo Entering the build phase...
+      - gradle build
+      - docker build -t om-service:latest .
+      - docker tag om-service:latest ${ECR_REPO}/om-repository:latest
+  post_build:
+    commands:
+      - echo Entering the post_build phase...
+      - docker push ${ECR_REPO}/om-repository:latest
+      - printf '[{"name" : "om-order-task", "imageUri" "%s"}]' ${ECR_REPO}/om-repository:latest > imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json
