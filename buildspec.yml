@@ -14,13 +14,12 @@ phases:
       - echo Entering the build phase...
       - java --version
       - ./gradlew build
-      - ls -a ./build/libs
   post_build:
     commands:
       - docker build -t om-service:latest .
       - docker tag om-service:latest ${ECR_REPO}/om-repository:latest
       - echo Entering the post_build phase...
       - docker push ${ECR_REPO}/om-repository:latest
-      - printf '[{"name" : "om-order-task", "imageUri" : "%s"}]' ${ECR_REPO}/om-repository:latest > imagedefinitions.json
+      - printf '[{"name" : "om-order-task", "imageUri" : "%s"}]' "${ECR_REPO}/om-repository:latest" > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
