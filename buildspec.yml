@@ -13,7 +13,7 @@ phases:
     commands:
       - echo Entering the build phase...
       - java --version
-      - ./gradlew build --status
+      - ./gradlew build
       - ls -a ./build/libs
   post_build:
     commands:
