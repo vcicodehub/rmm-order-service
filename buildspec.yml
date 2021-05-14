@@ -20,6 +20,6 @@ phases:
       - echo Entering the post_build phase...
       - echo 415353467794.dkr.ecr.us-east-2.amazonaws.com/om-repository:latest
       - docker push 415353467794.dkr.ecr.us-east-2.amazonaws.com/om-repository:latest
-      - printf '[{"name" : "om-order-task", "imageUri" : "%s"}]' 415353467794.dkr.ecr.us-east-2.amazonaws.com/om-repository:latest > imagedefinitions.json
-artifacts:
-  files: imagedefinitions.json
+      #- printf '[{"name" : "om-order-task", "imageUri" : "%s"}]' 415353467794.dkr.ecr.us-east-2.amazonaws.com/om-repository:latest > imagedefinitions.json
+#artifacts:
+#  files: imagedefinitions.json
