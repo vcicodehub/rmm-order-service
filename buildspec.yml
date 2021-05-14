@@ -1,4 +1,4 @@
-version: 2.0
+version: 0.2
 env:
   variables:
     ECR_REPO: 415353467794.dkr.ecr.us-east-2.amazonaws.com
