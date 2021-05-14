@@ -21,6 +21,6 @@ phases:
       - echo 415353467794.dkr.ecr.us-east-2.amazonaws.com/om-repository:latest
       - docker push 415353467794.dkr.ecr.us-east-2.amazonaws.com/om-repository:latest
       - echo Building imagedefinitions.json file
-      - printf '[{"name" : "%s", "imageUri" : "%s"}]' "om-order-task" "415353467794.dkr.ecr.us-east-2.amazonaws.com/om-repository:latest" > imagedefinitions.json
-#artifacts:
-#  files: imagedefinitions.json
+      - printf '[{"name":"%s","imageUri":"%s"}]' "om-order-task" "415353467794.dkr.ecr.us-east-2.amazonaws.com/om-repository:latest" > imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json
