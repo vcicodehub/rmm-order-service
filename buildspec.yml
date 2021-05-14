@@ -6,21 +6,20 @@ phases:
       - $(aws ecr get-login --no-include-email --region us-east-2)
       - chmod +x gradlew
       - ./gradlew --daemon
-      #- ECR_REPO=415353467794.dkr.ecr.us-east-2.amazonaws.com
+      - ECR_REPO=415353467794.dkr.ecr.us-east-2.amazonaws.com
   build:
     commands:
       - echo Entering the build phase...
       - java --version
       - ./gradlew build
       - docker build -t om-service:latest .
-      - docker tag om-service:latest 415353467794.dkr.ecr.us-east-2.amazonaws.com/om-repository:latest
+      - docker tag om-service:latest $ECR_REPO/om-repository:latest
       - docker images
   post_build:
     commands:
       - echo Entering the post_build phase...
-      - echo 415353467794.dkr.ecr.us-east-2.amazonaws.com/om-repository:latest
-      - docker push 415353467794.dkr.ecr.us-east-2.amazonaws.com/om-repository:latest
-      - echo Building imagedefinitions.json file
-      - printf '[{"name":"%s","imageUri":"%s"}]' "om-order-task" "415353467794.dkr.ecr.us-east-2.amazonaws.com/om-repository:latest" > imagedefinitions.json
+      - docker push $ECR_REPO/om-repository:latest
+      - printf '[{"name":"%s","imageUri":"%s"}]' "om-service-container" "$ECR_REPO/om-repository:latest" > imagedefinitions.json
+      - ls -la
 artifacts:
   files: imagedefinitions.json

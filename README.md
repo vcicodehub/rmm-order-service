@@ -15,6 +15,6 @@ Navigate to the link below to see the OpenAPI docs for this API:
 `http://<host>:<port>/swagger-ui.html`
 
 ### YAML Lint (life saver!)
-Navigate to the link below to find errors in YAML files.  GREAT for finding insideous bugs in the `buildspec.yml`!
+Navigate to the link below to find errors in YAML files.  GREAT for finding insidious bugs in the `buildspec.yml`!
 
 https://jsonformatter.org/yaml-formatter
