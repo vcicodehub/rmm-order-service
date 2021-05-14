@@ -10,7 +10,8 @@ phases:
   build:
     commands:
       - echo Entering the build phase...
-      - gradle build
+      - java --version
+      - gradle build --status
       - docker build -t om-service:latest .
       - docker tag om-service:latest ${ECR_REPO}/om-repository:latest
   post_build:
