@@ -11,6 +11,7 @@ phases:
     commands:
       - echo Entering the build phase...
       - java --version
+      - chmod +x gradlew
       - ./gradlew build --status
       - docker build -t om-service:latest .
       - docker tag om-service:latest ${ECR_REPO}/om-repository:latest
