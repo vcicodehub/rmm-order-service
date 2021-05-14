@@ -18,6 +18,7 @@ phases:
   post_build:
     commands:
       - echo Entering the post_build phase...
+      - echo $ECR_REPO/om-repository:latest
       - docker push $ECR_REPO/om-repository:latest
       - printf '[{"name" : "om-order-task", "imageUri" : "%s"}]' $ECR_REPO/om-repository:latest > imagedefinitions.json
 artifacts:
