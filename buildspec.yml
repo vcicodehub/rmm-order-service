@@ -1,4 +1,8 @@
 version: 0.2
+env:
+  parameter-store:
+    DOCKERHUB_USERNAME: "[user-name]"
+    DOCKERHUB_PASSWORD: "[password]"
 phases:
   pre_build:
     commands:
