@@ -12,6 +12,7 @@ phases:
       - echo Entering the build phase...
       - uname -a
       - java --version
+      - docker --version
       - ./gradlew bootjar
       - docker build -t om-service:latest .
       - docker tag om-service:latest $ECR_REPO/om-repository:latest
