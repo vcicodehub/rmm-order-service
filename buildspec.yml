@@ -7,6 +7,8 @@ phases:
       - chmod +x gradlew
       - ./gradlew --daemon
       - ECR_REPO=415353467794.dkr.ecr.us-east-2.amazonaws.com
+      - echo Logging in to Docker Hub...
+      - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
   build:
     commands:
       - echo Entering the build phase...
