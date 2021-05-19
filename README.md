@@ -1,6 +1,6 @@
 # Signet Supply Order Management Microservice
 
-This is the Supply Order Management Microservice (*formally call Compiere*) that manages the follow:
+This is the Supply Order Management Microservice (*formally called Compiere*) that manages the follow:
  * supply orders
  * supply order line items
  * receipt
@@ -46,3 +46,6 @@ You will need to add the following to the AIM Role created with CodePipeline:
     ]
 },
 `
+
+### DOSKEY marcos
+`doskey aws=docker run --rm -it -v %userprofile%\.aws:/root/.aws -v %cd%\aws amazon/aws-cli $*`
