@@ -8,7 +8,6 @@ import com.signet.model.user.Role;
 import com.signet.model.user.User;
 import com.signet.repository.UserRepository;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
