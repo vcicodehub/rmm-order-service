@@ -6,7 +6,6 @@ env:
 phases:
   pre_build:
     commands:
-      - echo Entering the pre_build phase...
       - $(aws ecr get-login --no-include-email --region us-east-2)
       - chmod +x gradlew
       - ./gradlew --daemon
@@ -15,7 +14,6 @@ phases:
       - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
   build:
     commands:
-      - echo Entering the build phase...
       - uname -a
       - java --version
       - docker --version
@@ -25,7 +23,6 @@ phases:
       - docker images
   post_build:
     commands:
-      - echo Entering the post_build phase...
       - docker push $ECR_REPO/om-repository:latest
       - printf '[{"name":"%s","imageUri":"%s"}]' "om-service-container" "$ECR_REPO/om-repository:latest" > imagedefinitions.json
       - ls -la

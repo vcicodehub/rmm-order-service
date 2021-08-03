@@ -44,7 +44,7 @@ public class OrderController {
   }
 
   @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Order retrieveOrderByID(@RequestBody Order order) {
+  public Order createOrder(@RequestBody Order order) {
     orderService.createOrder(order);
     return order;
   }
