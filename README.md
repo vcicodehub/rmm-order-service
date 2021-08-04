@@ -1,18 +1,12 @@
-# Signet Supply Order Management Microservice
+# Signet Repair Materials Management Microservice
 
-This is the Supply Order Management Microservice (*formally called Compiere*) that manages the follow:
+This is the Repair Materials Management Microservice (*formally called Compiere*) that manages the follow:
  * supply orders
  * supply order line items
  * receipt
  * receipt line items
  * users
  * vendors
-
-### The Swagger/OpenAPI spec
-
-Navigate to the link below to see the OpenAPI docs for this API:
-
-`http://<host>:<port>/swagger-ui.html`
 
 ### YAML Lint (life saver!)
 Navigate to the link below to find errors in YAML files.  GREAT for finding insidious bugs in the `buildspec.yml`!
@@ -26,7 +20,7 @@ https://medium.com/rockedscience/fixing-docker-hub-rate-limiting-errors-in-ci-cd
 
 You will need to add the following to the AIM Role created with CodePipeline:
 
-`
+```
 {
     "Effect": "Allow",
     "Action": [
@@ -45,7 +39,14 @@ You will need to add the following to the AIM Role created with CodePipeline:
         "{YOUR_KMS_KEY_ID_HERE}"
     ]
 },
-`
+```
 
-### DOSKEY marcos
-`doskey aws=docker run --rm -it -v %userprofile%\.aws:/root/.aws -v %cd%\aws amazon/aws-cli $*`
+## Push Docker image to ECR (free tier)
+* aws ecr create-repository --repository-name rmm-order-service --image-scanning-configuration scanOnPush=true --region us-east-2
+
+* aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 415353467794.dkr.ecr.us-east-2.amazonaws.com
+* docker tag rmm-order-service:latest 415353467794.dkr.ecr.us-east-2.amazonaws.com/rmm-order-service:latest
+* docker push 415353467794.dkr.ecr.us-east-2.amazonaws.com/rmm-order-service:latest
+
+## Delete an ECR image
+* aws ecr batch-delete-image --repository-name rmm-order-service --image-ids imageTag=latest
