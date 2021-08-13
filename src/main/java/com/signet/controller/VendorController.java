@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController()
+@CrossOrigin()
 @RequestMapping("/signet/api/v1/om/vendors")
 public class VendorController {
 
