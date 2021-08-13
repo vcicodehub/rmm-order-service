@@ -24,7 +24,7 @@ phases:
   post_build:
     commands:
       - docker push $ECR_REPO/rmm-order-service:latest
-      - printf '[{"name":"%s","imageUri":"%s"}]' "rmm-oder-service" "$ECR_REPO/rmm-order-service:latest" > imagedefinitions.json
+      - printf '[{"name":"%s","imageUri":"%s"}]' "rmm-order-service" "$ECR_REPO/rmm-order-service:latest" > imagedefinitions.json
       - ls -la
 artifacts:
   files: imagedefinitions.json
