@@ -1,6 +1,7 @@
 package com.signet.repository;
 
 import static com.signet.util.DatabaseUtils.mapModelObject;
+import static com.signet.util.DatabaseUtils.safeID;
 
 import java.math.BigDecimal;
 import java.sql.Types;
@@ -32,7 +33,7 @@ public class VendorRepositoryImpl implements VendorRepository {
   @Override
   public void deleteVendor(String id) {
     StringBuffer sql = new StringBuffer()
-      .append(" DELETE FROM om_vendor WHERE om_vendor_id = ?");
+      .append(" DELETE FROM rmm_vendor WHERE rmm_vendor_id = ?");
 
     int numberOfRows = jdbcTemplate.update(sql.toString(), new BigDecimal(id));
 
@@ -171,8 +172,7 @@ public class VendorRepositoryImpl implements VendorRepository {
 
     for(Map<String, Object> map: userDataList){
         Vendor vendor = new Vendor();
-        BigDecimal vendorID = (BigDecimal)map.get("rmm_vendor_id");
-        vendor.setID(vendorID.toString());
+        vendor.setID(safeID("rmm_vendor_id", map));
         vendor.setName((String)map.get("v_name"));
         vendor.setNumber((String)map.get("v_number"));
 

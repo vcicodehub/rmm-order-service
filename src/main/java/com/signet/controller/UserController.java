@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +52,11 @@ public class UserController {
   @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
   public void createUser(@RequestBody User user) throws SignetServiceException {
     userService.createUser(user);
+  }
+
+  @DeleteMapping(value = "/{userID}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public void deleteUser(@PathVariable String userID) throws SignetServiceException {
+    userService.deleteUser(userID);
   }
 
   @GetMapping(value = "/roles/{roleName}", produces = MediaType.APPLICATION_JSON_VALUE)

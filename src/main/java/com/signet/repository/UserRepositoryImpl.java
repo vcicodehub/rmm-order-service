@@ -1,8 +1,8 @@
 package com.signet.repository;
 
 import static com.signet.util.DatabaseUtils.mapModelObject;
+import static com.signet.util.DatabaseUtils.safeID;
 
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.signet.exceptions.SignetDatabaseException;
+import com.signet.exceptions.SignetNotFoundException;
 import com.signet.model.user.Role;
 import com.signet.model.user.RoleStatusType;
 import com.signet.model.user.User;
@@ -43,9 +44,13 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public List<User> searchUsers(User user) {
     StringBuffer sql = new StringBuffer()
-      .append(" select rmm_user_id, u_name, u_password, u_status, u_add_user_id, ")
-      .append("        u_add_date, u_mtc_user_id, u_mtc_date ")
-      .append(" from rmm_user ");
+      .append("select u.rmm_user_id, u.u_name, u.u_password, u.u_status, u.u_add_user_id, ")
+      .append("       u.u_add_date, u.u_mtc_user_id, u.u_mtc_date,")
+      .append("       r.rmm_role_id, r.ro_name, r.ro_status, r.ro_add_user_id, r.ro_add_date, ")
+      .append("       r.ro_mtc_user_id, r.ro_mtc_date, r.ro_last_copied_date ")
+      .append("from rmm_user u, rmm_user_role ur, rmm_role r ")
+      .append("where u.rmm_user_id = ur.rmm_user_id ")
+      .append("  AND ur.rmm_role_id = r.rmm_role_id");
 
     List<Map<String, Object>> userDataList =  jdbcTemplate.query(
         sql.toString(), 
@@ -65,10 +70,14 @@ public class UserRepositoryImpl implements UserRepository {
     log.info("retrieveUser called with userID " + userID);
 
     StringBuffer sql = new StringBuffer()
-      .append(" select rmm_user_id, u_name, u_password, u_status, u_add_user_id, ")
-      .append("        u_add_date, u_mtc_user_id, u_mtc_date ")
-      .append(" from rmm_user ")
-      .append(" where rmm_user_id = ? ");
+      .append("select u.rmm_user_id, u.u_name, u.u_password, u.u_status, u.u_add_user_id, ")
+      .append("       u.u_add_date, u.u_mtc_user_id, u.u_mtc_date, ")
+      .append("       r.rmm_role_id, r.ro_name, r.ro_status, r.ro_add_user_id, r.ro_add_date, ")
+      .append("       r.ro_mtc_user_id, r.ro_mtc_date, r.ro_last_copied_date ")
+      .append("from rmm_user u, rmm_user_role ur, rmm_role r ")
+      .append("where u.rmm_user_id = ur.rmm_user_id ")
+      .append("  AND ur.rmm_role_id = r.rmm_role_id ")
+      .append("  AND u.rmm_user_id = ?");
 
     List<Map<String, Object>> userDataList =  jdbcTemplate.query(
         sql.toString(), 
@@ -84,6 +93,16 @@ public class UserRepositoryImpl implements UserRepository {
 
     return user;
   }
+
+  @Override
+  public void deleteUser(String userID) {
+    StringBuffer sql = new StringBuffer()
+      .append(" DELETE FROM rmm_user WHERE rmm_user_id = ?");
+
+    int numberOfRows = jdbcTemplate.update(sql.toString(), userID);
+
+    log.info("Delete " + numberOfRows + " row(s) from rmm_user.");
+  }   
 
   @Override
   public String createUser(User user) {
@@ -119,7 +138,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     jdbcTemplate.update(sql.toString(),
       user.getUserID(), 
-      new BigDecimal(role.getID()), 
+      Integer.valueOf(role.getID()), 
       role.getValue(), 
       RoleStatusType.ACTIVE.toString(), 
       "SYSTEM", Calendar.getInstance(),
@@ -141,26 +160,49 @@ public class UserRepositoryImpl implements UserRepository {
     List<User> userList = new ArrayList<User>();
     for(Map<String, Object> map: userDataList){
 
-      user = new User();
-      user.setID((String)map.get("rmm_user_id"));
-      user.setUserID((String)map.get("rmm_user_id"));
-      user.setName((String)map.get("u_name"));
-      user.setStatus(UserStatusType.valueOf((String)map.get("u_status")));
+      String userID = (String)map.get("rmm_user_id");
+      user = findUser(userID, userList);
+      if (user == null) {
+        user = new User();
+        user.setID(userID);
+        user.setUserID(userID);
+        user.setName((String)map.get("u_name"));
+        user.setStatus(UserStatusType.valueOf((String)map.get("u_status")));
+        mapModelObject(user, map, "u");
+        userList.add(user);
+      }
 
-      mapModelObject(user, map, "u");
-      
-      userList.add(user);
+      Role role = new Role();
+      role.setID(safeID("rmm_role_id", map));
+      role.setName((String)map.get("ro_name"));
+      role.setStatus(RoleStatusType.valueOf((String)map.get("ro_status")));
+      mapModelObject(role, map, "ro");
+      user.addRole(role);
     }
 
     return userList;
  }
 
+ private User findUser(String userID, List<User> usersList) {
+   if (userID == null || usersList == null || usersList.size() == 0) {
+     return null;
+   }
+   for (User usr : usersList) {
+    String usrID = usr.getID();
+    if (usrID != null && usrID.equals(userID)) {
+      return usr;
+    }
+  }
+  return null;
+}
+
  /**
   * Retrieves a single Role object with the given roleName.
   * @param roleName
   * @return Role
+ * @throws SignetNotFoundException
   */
-  public Role retrieveRoleByName(String roleName) {
+  public Role retrieveRoleByName(String roleName) throws SignetNotFoundException {
     StringBuffer sql = new StringBuffer()
       .append(" select rmm_role_id, ro_name, ro_status, ro_add_user_id,  ")
       .append("        ro_add_date, ro_mtc_user_id, ro_mtc_date ")
@@ -169,13 +211,15 @@ public class UserRepositoryImpl implements UserRepository {
     List<Map<String, Object>> userDataList =  
       jdbcTemplate.query(sql.toString(), new ColumnMapRowMapper(), roleName);
 
+    if (userDataList.size() == 0) {
+      throw new SignetNotFoundException("The role " + roleName + " is not a valid role.");
+    }
     List<Role> roleList = new ArrayList<Role>();
     for (Map<String,Object> map : userDataList) {
       Role role = new Role();
-      Integer id = (Integer)map.get("rmm_role_id");
-      role.setID(id.toString()); 
-      role.setName((String)map.get("r_name"));
-      role.setStatus(RoleStatusType.valueOf((String)map.get("r_status")));
+      role.setID(safeID("rmm_role_id", map)); 
+      role.setName((String)map.get("ro_name"));
+      role.setStatus(RoleStatusType.valueOf((String)map.get("ro_status")));
 
       mapModelObject(role, map, "r");
 
@@ -205,6 +249,18 @@ public class UserRepositoryImpl implements UserRepository {
 
     role.setID(Integer.toString(id));
     return role;
-  }   
+  }
 
+  /**
+   * deleteRolesByUserID
+   * @param userID
+   */
+  public void deleteRolesByUserID(String userID) throws SignetNotFoundException {
+    StringBuffer sql = new StringBuffer()
+      .append(" DELETE FROM rmm_user_role WHERE rmm_user_id = ?");
+
+    int numberOfRows = jdbcTemplate.update(sql.toString(), userID);
+
+    log.info("Delete " + numberOfRows + " row(s) from rmm_user_role.");
+  }
 }

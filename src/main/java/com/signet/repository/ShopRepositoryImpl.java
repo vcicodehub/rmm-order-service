@@ -1,6 +1,7 @@
 package com.signet.repository;
 
 import static com.signet.util.DatabaseUtils.mapModelObject;
+import static com.signet.util.DatabaseUtils.safeID;
 
 import java.math.BigDecimal;
 import java.sql.Types;
@@ -32,19 +33,19 @@ public class ShopRepositoryImpl implements ShopRepository {
   @Override
   public void deleteShop(String shopID) {
     StringBuffer sql = new StringBuffer()
-      .append("DELETE FROM om_shop WHERE om_shop_id = ?");
+      .append("DELETE FROM rmm_shop WHERE rmm_shop_id = ?");
 
     int numberRowsDeleted = jdbcTemplate.update(sql.toString(), new BigDecimal(shopID));
 
-    log.info("Deleted " + numberRowsDeleted + " row(s) from om_shop.");
+    log.info("Deleted " + numberRowsDeleted + " row(s) from rmm_shop.");
   }
 
   @Override
   public Shop createShop(Shop shop) {
     StringBuffer sql = new StringBuffer()
-      .append(" INSERT INTO om_shop (om_shop_id, oms_number, oms_store_number, oms_name, oms_addr_line1,  ")
-      .append("        oms_addr_line2, oms_addr_city, oms_addr_state, oms_addr_zip, oms_status,  ")
-      .append("        oms_add_user_id, oms_add_date, oms_mtc_user_id, oms_mtc_date)  ")
+      .append(" INSERT INTO rmm_shop (rmm_shop_id, s_number, s_store_number, s_name, s_addr_line1,  ")
+      .append("        s_addr_line2, s_addr_city, s_addr_state, s_addr_zip, s_status,  ")
+      .append("        s_add_user_id, s_add_date, s_mtc_user_id, s_mtc_date)  ")
       .append(" VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?)  ");
 
     Address address = shop.getAddress();
@@ -77,10 +78,10 @@ public class ShopRepositoryImpl implements ShopRepository {
   @Override
   public List<Shop> searchShops(Shop shop) {
     StringBuffer sql = new StringBuffer()
-      .append(" SELECT om_shop_id, oms_number, oms_store_number, oms_name, oms_addr_line1,  ")
-      .append("        oms_addr_line2, oms_addr_city, oms_addr_state, oms_addr_zip, oms_status,  ")
-      .append("        oms_add_user_id, oms_add_date, oms_mtc_user_id, oms_mtc_date  ")
-      .append(" FROM om_shop ");
+      .append(" SELECT rmm_shop_id, s_number, s_store_number, s_name, s_addr_line1,  ")
+      .append("        s_addr_line2, s_addr_city, s_addr_state, s_addr_zip, s_status,  ")
+      .append("        s_add_user_id, s_add_date, s_mtc_user_id, s_mtc_date  ")
+      .append(" FROM rmm_shop ");
 
     List<Map<String, Object>> userDataList =  jdbcTemplate.query(
         sql.toString(), 
@@ -98,11 +99,11 @@ public class ShopRepositoryImpl implements ShopRepository {
   public Shop retrieveShopByID(String id) {
 
     StringBuffer sql = new StringBuffer()
-    .append(" SELECT om_shop_id, oms_number, oms_store_number, oms_name, oms_addr_line1,  ")
-    .append("        oms_addr_line2, oms_addr_city, oms_addr_state, oms_addr_zip, oms_status,  ")
-    .append("        oms_add_user_id, oms_add_date, oms_mtc_user_id, oms_mtc_date  ")
-    .append(" FROM om_shop ")
-    .append(" WHERE om_shop_id = ?");
+    .append(" SELECT rmm_shop_id, s_number, s_store_number, s_name, s_addr_line1,  ")
+    .append("        s_addr_line2, s_addr_city, s_addr_state, s_addr_zip, s_status,  ")
+    .append("        s_add_user_id, s_add_date, s_mtc_user_id, s_mtc_date  ")
+    .append(" FROM rmm_shop ")
+    .append(" WHERE rmm_shop_id = ?");
 
     List<Map<String, Object>> userDataList =  jdbcTemplate.query(
         sql.toString(), 
@@ -128,11 +129,11 @@ public class ShopRepositoryImpl implements ShopRepository {
   public Shop retrieveShopByNumber(String shopNumber) {
 
     StringBuffer sql = new StringBuffer()
-    .append(" SELECT om_shop_id, oms_number, oms_store_number, oms_name, oms_addr_line1,  ")
-    .append("        oms_addr_line2, oms_addr_city, oms_state, oms_zip, oms_status,  ")
-    .append("        oms_add_user_id, oms_add_date, oms_mtc_user_id, oms_mtc_date  ")
-    .append(" FROM om_shop ")
-    .append(" WHERE oms_number = ?");
+    .append(" SELECT rmm_shop_id, s_number, s_store_number, s_name, s_addr_line1,  ")
+    .append("        s_addr_line2, s_addr_city, s_state, s_zip, s_status,  ")
+    .append("        s_add_user_id, s_add_date, s_mtc_user_id, s_mtc_date  ")
+    .append(" FROM rmm_shop ")
+    .append(" WHERE s_number = ?");
 
     List<Map<String, Object>> userDataList =  jdbcTemplate.query(
         sql.toString(), 
@@ -159,18 +160,17 @@ public class ShopRepositoryImpl implements ShopRepository {
 
     for(Map<String, Object> map: userDataList){
         Shop shop = new Shop();
-        BigDecimal shopID = (BigDecimal)map.get("om_shop_id");
-        shop.setID(shopID.toString());
-        shop.setName((String)map.get("oms_name"));
-        shop.setNumber((String)map.get("oms_number"));
-        shop.setStoreNumber((String)map.get("oms_store_number"));
+        shop.setID(safeID("rmm_shop_id", map));
+        shop.setName((String)map.get("s_name"));
+        shop.setNumber((String)map.get("s_number"));
+        shop.setStoreNumber((String)map.get("s_store_number"));
 
         Address address = new Address();
-        address.setLine1((String)map.get("oms_addr_line1"));
-        address.setLine2((String)map.get("oms_addr_line2"));
-        address.setCity((String)map.get("oms_addr_city"));
-        address.setState((String)map.get("oms_state"));
-        address.setZip((String)map.get("oms_zip"));
+        address.setLine1((String)map.get("s_addr_line1"));
+        address.setLine2((String)map.get("s_addr_line2"));
+        address.setCity((String)map.get("s_addr_city"));
+        address.setState((String)map.get("s_state"));
+        address.setZip((String)map.get("s_zip"));
         shop.setAddress(address);
 
         // Standard columns

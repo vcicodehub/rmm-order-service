@@ -78,7 +78,21 @@ public class UserServiceImpl implements UserService {
     userRepository.createUser(user);
     userRepository.createUserRole(user, role);
   }
-    
+  
+  /**
+   * deleteUser
+   * @param userID
+   */
+  public void deleteUser(String userID) throws SignetServiceException {
+    User user = userRepository.retrieveUserByID(userID);
+    if (user == null) {
+      return;
+    }
+
+    userRepository.deleteRolesByUserID(userID);
+    userRepository.deleteUser(userID);
+  }
+
   /**
    * Creates a new User with the given User object.  At least one Role
    * is required to create the User.
@@ -111,7 +125,7 @@ public class UserServiceImpl implements UserService {
       if (role == null) {
         throw new SignetIllegalArgumentException("The role " + newRole.getName() + " is not a valid role name.");
       }
-      userRepository.createUserRole(user, newRole);
+      userRepository.createUserRole(user, role);
     }
   }
 

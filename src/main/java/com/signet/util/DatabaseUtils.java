@@ -15,6 +15,15 @@ import org.springframework.util.ObjectUtils;
 
 public class DatabaseUtils {
 
+    public static String safeID(String columnName, Map<String, Object> map) {
+      if (columnName == null || map == null || map.isEmpty()) {
+        return null;
+      }
+
+      Integer id = (Integer)map.get(columnName);
+      return id == null ? null : Integer.toString(id);
+    }
+
     /**
      * Convert the given Calendar to proper SQL date.
      * @param calendar

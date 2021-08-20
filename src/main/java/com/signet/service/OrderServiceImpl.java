@@ -13,27 +13,27 @@ import lombok.extern.slf4j.Slf4j;
 @Service("orderService")
 public class OrderServiceImpl implements OrderService {
 
-  OrderRepository repairJobRepository;
+  OrderRepository orderRepository;
 
   OrderServiceImpl(OrderRepository repairJobRepository) {
-    this.repairJobRepository = repairJobRepository;
+    this.orderRepository = repairJobRepository;
   }
 
   @Override
   public Order createOrder(Order order) {
     log.info("createOrder()");
-    return repairJobRepository.createOrder(order);
+    return orderRepository.createOrder(order);
   }
 
   @Override
   public Order retrieveOrderByID(String id) {
     log.info("retrieveOrderByID(" + id + ")");
-    return repairJobRepository.retrieveOrderByID(id);
+    return orderRepository.retrieveOrderByID(id);
   }
 
   @Override
   public List<Order> searchOrders(Order order) {
-    return repairJobRepository.searchOrders(order);
+    return orderRepository.searchOrders(order);
   }
     
 }
