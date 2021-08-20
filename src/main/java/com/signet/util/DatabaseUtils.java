@@ -121,5 +121,6 @@ public class DatabaseUtils {
       obj.setAddDate(convertDateStringToCalendar((java.sql.Date)map.get(prefix + "_add_date")));
       obj.setMtcUserID((String)map.get(prefix + "_mtc_user_id"));
       obj.setMtcDate(convertDateStringToCalendar((java.sql.Date)map.get(prefix + "_mtc_date")));
+      obj.setLastCopiedDate(convertDateStringToCalendar((java.sql.Date)map.get(prefix + "_laat_copied_date")));
     }
 }

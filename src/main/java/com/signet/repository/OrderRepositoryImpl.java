@@ -39,15 +39,15 @@ public class OrderRepositoryImpl implements OrderRepository {
   @Override
   public void deleteOrder(String orderID) {
     StringBuffer sql = new StringBuffer()
-      .append("DELETE from om_order_line_item where om_order_id = ?");
+      .append("DELETE from rmm_order_line_item where rmm_order_id = ?");
 
-    int deletedRows = jdbcTemplate.update(sql.toString(), new BigDecimal(orderID));
-    log.info("Deleted " + deletedRows + " row(s) from om_order_line_item.");
+    int deletedRows = jdbcTemplate.update(sql.toString(), orderID);
+    log.info("Deleted " + deletedRows + " row(s) from rmm_order_line_item.");
 
     sql = new StringBuffer()
-      .append("DELETE from om_order where om_order_id = ?");
+      .append("DELETE from om_order where rmm_order_id = ?");
 
-    jdbcTemplate.update(sql.toString(), new BigDecimal(orderID));
+    jdbcTemplate.update(sql.toString(), orderID);
     log.info("Deleted " + deletedRows + " row(s) from om_order.");
   }   
 
@@ -124,14 +124,14 @@ public class OrderRepositoryImpl implements OrderRepository {
    * @return List<Order>
    */
   private List<Order> mapOrder(List<Map<String, Object>> userDataList) {
-    BigDecimal rowID = null;
-    BigDecimal orderRowID = null;
+    Integer rowID = null;
+    Integer orderRowID = null;
     Order order = null;
-    BigDecimal lineItemRowID = null;
+    Integer lineItemRowID = null;
     ArrayList<Order> orderList = new ArrayList<Order>();
     OrderLineItem lineItem = null;
     for(Map<String, Object> map: userDataList){
-      rowID = (BigDecimal)map.get("C_ORDER_ID");
+      rowID = (Integer)map.get("C_ORDER_ID");
       if (!rowID.equals(orderRowID)) {
         order = new Order();
         orderRowID = rowID;
@@ -140,7 +140,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         orderList.add(order);
 
         Shop shop = new Shop();
-        BigDecimal shopID = (BigDecimal)map.get("AD_ORG_ID");
+        Integer shopID = (Integer)map.get("AD_ORG_ID");
         shop.setID(shopID.toString());
         shop.setName((String)map.get("SHOP_NAME"));
         shop.setNumber((String)map.get("SHOPNO"));
@@ -151,18 +151,18 @@ public class OrderRepositoryImpl implements OrderRepository {
         order.setVendor(vendor);
       }
 
-      rowID = (BigDecimal)map.get("C_ORDERLINE_ID");
+      rowID = (Integer)map.get("C_ORDERLINE_ID");
       if (!rowID.equals(lineItemRowID)) {
         lineItemRowID = rowID;
         lineItem = new OrderLineItem();
         lineItem.setID(rowID.toString());
-        BigDecimal count = (BigDecimal)map.get("QTYORDERED");
+        Integer count = (Integer)map.get("QTYORDERED");
         lineItem.setQuantityOrdered(count.intValue());
         order.addLineItem(lineItem);
       }
 
       Product product = new Product();
-      rowID = (BigDecimal)map.get("M_PRODUCT_ID");
+      rowID = (Integer)map.get("M_PRODUCT_ID");
       product.setID(rowID.toString());
       product.setUnitPrice((BigDecimal)map.get("PRICEACTUAL"));
       product.setCategory((String)map.get("VALUE"));

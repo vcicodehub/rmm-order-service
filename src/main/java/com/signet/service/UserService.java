@@ -13,4 +13,5 @@ public interface UserService {
     public void createUserWithRole(User user, String roleName) throws SignetServiceException;
 
     public Role retrieveRoleByName(String roleName) throws SignetServiceException;
+    public Role createRole(Role role) throws SignetServiceException;
 }

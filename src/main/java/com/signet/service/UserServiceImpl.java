@@ -104,8 +104,12 @@ public class UserServiceImpl implements UserService {
 
     userRepository.createUser(user);
     for (Role newRole : roleList) {
-      if (ObjectUtils.isEmpty(newRole.getID())) {
-        throw new SignetIllegalArgumentException("The role ID is missing.");
+      if (newRole.getName() == null) {
+        throw new SignetIllegalArgumentException("The role name is missing.");
+      }
+      Role role = this.retrieveRoleByName(newRole.getName());
+      if (role == null) {
+        throw new SignetIllegalArgumentException("The role " + newRole.getName() + " is not a valid role name.");
       }
       userRepository.createUserRole(user, newRole);
     }
@@ -116,5 +120,16 @@ public class UserServiceImpl implements UserService {
   public Role retrieveRoleByName(String roleName) throws SignetServiceException {
     return userRepository.retrieveRoleByName(roleName);
   }
+
+  public Role createRole(Role role) throws SignetServiceException {
+    if (role == null) {
+      throw new SignetIllegalArgumentException("The role is missing.");
+    }
+    if (role.getName() == null || role.getName().isEmpty()) {
+      throw new SignetIllegalArgumentException("The role name is missing.");
+    }
+    return userRepository.createRole(role);
+  }
+
     
 }

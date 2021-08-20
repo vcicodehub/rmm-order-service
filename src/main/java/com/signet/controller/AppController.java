@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController()
-@RequestMapping("/signet/api/v1/om")
+@RequestMapping("/api/v1/rmm")
 public class AppController implements ApplicationContextAware {
   private ApplicationContext applicationContext = null; 
 

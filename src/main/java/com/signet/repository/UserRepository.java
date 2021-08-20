@@ -12,4 +12,5 @@ public interface UserRepository {
     public String createUserRole(User user, Role role);
 
     public Role retrieveRoleByName(String roleName);
+    public Role createRole(Role role);
 }

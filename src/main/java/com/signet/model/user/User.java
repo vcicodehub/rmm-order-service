@@ -12,9 +12,9 @@ public class User extends ModelObject {
     private UserStatusType status;
 
     public String getUserID() { return userID; }
-    public void setUserID(String userID) { this.userID = userID; }
+    public void   setUserID(String userID) { this.userID = userID; }
     public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void   setName(String name) { this.name = name; }
     public UserStatusType getStatus() { return status; }
     public void setStatus(UserStatusType status) { this.status = status; }
 

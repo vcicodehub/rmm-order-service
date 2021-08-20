@@ -42,15 +42,18 @@ public class VendorRepositoryImpl implements VendorRepository {
   @Override
   public Vendor createVendor(Vendor vendor) {
     StringBuffer sql = new StringBuffer()
-      .append(" INSERT INTO om_vendor (om_vendor_id, omv_type, omv_number, omv_name, omv_email_addr,  ")
-      .append("    omv_addr_line1, omv_addr_line2, omv_addr_city, omv_addr_state, omv_addr_zip,  ")
-      .append("    omv_status, omv_add_user_id, omv_add_date, omv_mtc_user_id, omv_mtc_date)  ")
-      .append(" VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?) ");
+      .append(" INSERT INTO rmm_vendor ( ")
+      .append("rmm_vendor_id, v_type, v_status, v_number, v_name, v_email_addr, ")
+      .append("v_addr_line1, v_addr_line2, v_addr_city, v_addr_state, v_addr_zip, ")
+      .append("v_payterm_discount, v_payterm_net_date, v_payterm_net_days, ")
+      .append("v_add_user_id, v_add_date, v_mtc_user_id, v_mtc_date, v_last_copied_date")
+      .append(" VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?) ");
 
     Address address = vendor.getAddress();
     jdbcTemplate.update(sql.toString(), 
         new BigDecimal(vendor.getID()),
         vendor.getType(),
+        vendor.getStatus(),
         vendor.getNumber(),
         vendor.getName(),
         vendor.getEmailAddress(),
@@ -59,11 +62,14 @@ public class VendorRepositoryImpl implements VendorRepository {
         address.getCity(),
         address.getState(),
         address.getZip(),
-        "ACTIVE",
+        vendor.getPaymentTermsDiscount(),
+        vendor.getPaymentTermsNetDate(),
+        vendor.getPaymentTermsNetDays(),
         vendor.getAddUserID(),
         vendor.getAddDate(),
         vendor.getMtcUserID(),
-        vendor.getMtcDate());
+        vendor.getMtcDate(),
+        vendor.getLastCopiedDate());
 
     log.info("Created new vendor " + vendor.getID());
 
@@ -78,10 +84,12 @@ public class VendorRepositoryImpl implements VendorRepository {
   @Override
   public List<Vendor> searchVendors(Vendor vendor) {
     StringBuffer sql = new StringBuffer()
-      .append(" SELECT om_vendor_id, omv_type, omv_number, omv_name, omv_email_addr,  ")
-      .append("        omv_addr_line1, omv_addr_line2, omv_addr_city, omv_addr_state, omv_addr_zip,  ")
-      .append("        omv_status, omv_add_user_id, omv_add_date, omv_mtc_user_id, omv_mtc_date  ")
-      .append(" FROM om_vendor ");
+      .append(" SELECT ")
+      .append("rmm_vendor_id, v_type, v_status, v_number, v_name, v_email_addr, ")
+      .append("v_addr_line1, v_addr_line2, v_addr_city, v_addr_state, v_addr_zip, ")
+      .append("v_payterm_discount, v_payterm_net_date, v_payterm_net_days, ")
+      .append("v_add_user_id, v_add_date, v_mtc_user_id, v_mtc_date, v_last_copied_date ")      
+      .append(" FROM rmm_vendor ");
     List<Map<String, Object>> userDataList =  jdbcTemplate.query(
         sql.toString(), 
         new ColumnMapRowMapper());
@@ -98,11 +106,13 @@ public class VendorRepositoryImpl implements VendorRepository {
   public Vendor retrieveVendorByID(String id) {
 
     StringBuffer sql = new StringBuffer()
-    .append(" SELECT om_vendor_id, omv_type, omv_number, omv_name, omv_email_addr,  ")
-    .append("        omv_addr_line1, omv_addr_line2, omv_addr_city, omv_addr_state, omv_addr_zip,  ")
-    .append("        omv_status, omv_add_user_id, omv_add_date, omv_mtc_user_id, omv_mtc_date  ")
-    .append(" FROM om_vendor ")
-    .append(" WHERE om_vendor_id = ?");
+    .append(" SELECT ")
+    .append("rmm_vendor_id, v_type, v_status, v_number, v_name, v_email_addr, ")
+    .append("v_addr_line1, v_addr_line2, v_addr_city, v_addr_state, v_addr_zip, ")
+    .append("v_payterm_discount, v_payterm_net_date, v_payterm_net_days, ")
+    .append("v_add_user_id, v_add_date, v_mtc_user_id, v_mtc_date, v_last_copied_date ")    
+    .append(" FROM rmm_vendor ")
+    .append(" WHERE rmm_vendor_id = ?");
 
     List<Map<String, Object>> userDataList =  jdbcTemplate.query(
         sql.toString(), 
@@ -128,11 +138,13 @@ public class VendorRepositoryImpl implements VendorRepository {
   public Vendor retrieveVendorByNumber(String vendorNumber) {
 
     StringBuffer sql = new StringBuffer()
-    .append(" SELECT om_vendor_id, omv_type, omv_number, omv_name, omv_email_addr,  ")
-    .append("        omv_addr_line1, omv_addr_line2, omv_addr_city, omv_addr_state, omv_addr_zip,  ")
-    .append("        omv_status, omv_add_user_id, omv_add_date, omv_mtc_user_id, omv_mtc_date  ")
-    .append(" FROM om_vendor ")
-    .append(" WHERE omv_number = ?");
+    .append(" SELECT ")
+    .append("rmm_vendor_id, v_type, v_status, v_number, v_name, v_email_addr, ")
+    .append("v_addr_line1, v_addr_line2, v_addr_city, v_addr_state, v_addr_zip, ")
+    .append("v_payterm_discount, v_payterm_net_date, v_payterm_net_days, ")
+    .append("v_add_user_id, v_add_date, v_mtc_user_id, v_mtc_date, v_last_copied_date")    
+    .append(" FROM rmm_vendor ")
+    .append(" WHERE v_number = ?");
 
     List<Map<String, Object>> userDataList =  jdbcTemplate.query(
         sql.toString(), 
@@ -159,21 +171,21 @@ public class VendorRepositoryImpl implements VendorRepository {
 
     for(Map<String, Object> map: userDataList){
         Vendor vendor = new Vendor();
-        BigDecimal vendorID = (BigDecimal)map.get("om_vendor_id");
+        BigDecimal vendorID = (BigDecimal)map.get("rmm_vendor_id");
         vendor.setID(vendorID.toString());
-        vendor.setName((String)map.get("omv_name"));
-        vendor.setNumber((String)map.get("omv_number"));
+        vendor.setName((String)map.get("v_name"));
+        vendor.setNumber((String)map.get("v_number"));
 
         Address address = new Address();
-        address.setLine1((String)map.get("omv_addr_line1"));
-        address.setLine2((String)map.get("omv_addr_line2"));
-        address.setCity((String)map.get("omv_addr_city"));
-        address.setState((String)map.get("omv_addr_state"));
-        address.setZip((String)map.get("omv_addr_zip"));
+        address.setLine1((String)map.get("v_addr_line1"));
+        address.setLine2((String)map.get("v_addr_line2"));
+        address.setCity((String)map.get("v_addr_city"));
+        address.setState((String)map.get("v_addr_state"));
+        address.setZip((String)map.get("v_addr_zip"));
         vendor.setAddress(address);
 
         // Standard columns
-        mapModelObject(vendor, map, "omv");
+        mapModelObject(vendor, map, "v");
 
         vendorList.add(vendor);
     }

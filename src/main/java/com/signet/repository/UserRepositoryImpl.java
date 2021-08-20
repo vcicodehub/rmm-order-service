@@ -43,9 +43,9 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public List<User> searchUsers(User user) {
     StringBuffer sql = new StringBuffer()
-      .append(" select om_user_id, omu_name, omu_password, omu_status, omu_add_user_id, ")
-      .append("        omu_add_date, omu_mtc_user_id, omu_mtc_date ")
-      .append(" from om_user ");
+      .append(" select rmm_user_id, u_name, u_password, u_status, u_add_user_id, ")
+      .append("        u_add_date, u_mtc_user_id, u_mtc_date ")
+      .append(" from rmm_user ");
 
     List<Map<String, Object>> userDataList =  jdbcTemplate.query(
         sql.toString(), 
@@ -65,10 +65,10 @@ public class UserRepositoryImpl implements UserRepository {
     log.info("retrieveUser called with userID " + userID);
 
     StringBuffer sql = new StringBuffer()
-      .append(" select om_user_id, omu_name, omu_password, omu_status, omu_add_user_id, ")
-      .append("        omu_add_date, omu_mtc_user_id, omu_mtc_date ")
-      .append(" from om_user ")
-      .append(" where om_user_id = ? ");
+      .append(" select rmm_user_id, u_name, u_password, u_status, u_add_user_id, ")
+      .append("        u_add_date, u_mtc_user_id, u_mtc_date ")
+      .append(" from rmm_user ")
+      .append(" where rmm_user_id = ? ");
 
     List<Map<String, Object>> userDataList =  jdbcTemplate.query(
         sql.toString(), 
@@ -91,8 +91,8 @@ public class UserRepositoryImpl implements UserRepository {
       return null;
     }
     StringBuffer sql = new StringBuffer()
-    .append(" INSERT INTO om_user (om_user_id, omu_name, omu_password, omu_status, ")
-    .append("     omu_add_user_id, omu_add_date, omu_mtc_user_id, omu_mtc_date) ")
+    .append(" INSERT INTO rmm_user (rmm_user_id, u_name, u_password, u_status, ")
+    .append("     u_add_user_id, u_add_date, u_mtc_user_id, u_mtc_date) ")
     .append(" VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
     jdbcTemplate.update(sql.toString(),
@@ -113,8 +113,8 @@ public class UserRepositoryImpl implements UserRepository {
       return null;
     }
     StringBuffer sql = new StringBuffer()
-    .append(" INSERT INTO om_user_role (om_user_id, om_role_id, omur_value, ")
-    .append("    omur_status, omur_add_user_id, omur_add_date, omur_mtc_user_id, omur_mtc_date) ")
+    .append(" INSERT INTO rmm_user_role (rmm_user_id, rmm_role_id, ur_value, ")
+    .append("    ur_status, ur_add_user_id, ur_add_date, ur_mtc_user_id, ur_mtc_date) ")
     .append(" VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
     jdbcTemplate.update(sql.toString(),
@@ -142,12 +142,12 @@ public class UserRepositoryImpl implements UserRepository {
     for(Map<String, Object> map: userDataList){
 
       user = new User();
-      user.setID((String)map.get("om_user_id"));
-      user.setUserID((String)map.get("om_user_id"));
-      user.setName((String)map.get("omu_name"));
-      user.setStatus(UserStatusType.valueOf((String)map.get("omu_status")));
+      user.setID((String)map.get("rmm_user_id"));
+      user.setUserID((String)map.get("rmm_user_id"));
+      user.setName((String)map.get("u_name"));
+      user.setStatus(UserStatusType.valueOf((String)map.get("u_status")));
 
-      mapModelObject(user, map, "omu");
+      mapModelObject(user, map, "u");
       
       userList.add(user);
     }
@@ -162,9 +162,9 @@ public class UserRepositoryImpl implements UserRepository {
   */
   public Role retrieveRoleByName(String roleName) {
     StringBuffer sql = new StringBuffer()
-      .append(" select om_role_id, omr_name, omr_status, omr_add_user_id,  ")
-      .append("        omr_add_date, omr_mtc_user_id, omr_mtc_date ")
-      .append(" from om_role where omr_name = ? ");
+      .append(" select rmm_role_id, ro_name, ro_status, ro_add_user_id,  ")
+      .append("        ro_add_date, ro_mtc_user_id, ro_mtc_date ")
+      .append(" from rmm_role where ro_name = ? ");
 
     List<Map<String, Object>> userDataList =  
       jdbcTemplate.query(sql.toString(), new ColumnMapRowMapper(), roleName);
@@ -172,16 +172,39 @@ public class UserRepositoryImpl implements UserRepository {
     List<Role> roleList = new ArrayList<Role>();
     for (Map<String,Object> map : userDataList) {
       Role role = new Role();
-      BigDecimal id = (BigDecimal)map.get("om_role_id");
+      Integer id = (Integer)map.get("rmm_role_id");
       role.setID(id.toString()); 
-      role.setName((String)map.get("omr_name"));
-      //role.setStatus(RoleStatusType.valueOf((String)map.get("omr_status")));
+      role.setName((String)map.get("r_name"));
+      role.setStatus(RoleStatusType.valueOf((String)map.get("r_status")));
 
-      mapModelObject(role, map, "omr");
+      mapModelObject(role, map, "r");
 
       roleList.add(role);
     }
 
     return roleList.get(0);
   }
+
+  @Override
+  public Role createRole(Role role) {
+    if (role == null) {
+      return null;
+    }
+
+    StringBuffer sql = new StringBuffer()
+    .append(" INSERT INTO rmm_role (ro_name, ro_status, ")
+    .append("     ro_add_user_id, ro_add_date, ro_mtc_user_id, ro_mtc_date) ")
+    .append(" VALUES (?, ?, ?, ?, ?, ?)");
+
+    int id = jdbcTemplate.update(sql.toString(),
+      role.getName(), 
+      RoleStatusType.ACTIVE.toString(), 
+      "SYSTEM", Calendar.getInstance(),
+      "SYSTEM", Calendar.getInstance()
+    );
+
+    role.setID(Integer.toString(id));
+    return role;
+  }   
+
 }

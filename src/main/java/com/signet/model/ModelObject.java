@@ -11,6 +11,7 @@ public class ModelObject implements Serializable {
   private Calendar addDate;
   private String   mtcUserID;
   private Calendar mtcDate;
+  private Calendar lastCopiedDate;
 
   public String   getID() { return id; }
   public void     setID(String id) { this.id = id; }
@@ -22,6 +23,6 @@ public class ModelObject implements Serializable {
   public void     setMtcUserID(String mtcUserID) { this.mtcUserID = mtcUserID; }
   public Calendar getMtcDate() { return mtcDate; }
   public void     setMtcDate(Calendar mtcDate) { this.mtcDate = mtcDate; }
-
-  
+  public Calendar getLastCopiedDate() { return lastCopiedDate; }
+  public void     setLastCopiedDate(Calendar lastCopiedDate) { this.lastCopiedDate = lastCopiedDate; }
 }

@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController()
-@RequestMapping("/signet/api/v1/om/shops")
+@RequestMapping("/api/v1/rmm/shops")
 public class ShopController {
 
   ShopService shopService;

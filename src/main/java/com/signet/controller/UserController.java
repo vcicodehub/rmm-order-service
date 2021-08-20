@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController()
-@RequestMapping("/signet/api/v1/om/users")
+@RequestMapping("/api/v1/rmm/users")
 public class UserController {
 
   @Autowired
@@ -48,18 +48,18 @@ public class UserController {
     return userList;
   }
 
-  @PostMapping(value = "/role/{roleName}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public void createUser(@RequestBody User user, @PathVariable String roleName) throws SignetServiceException {
-    userService.createUserWithRole(user, roleName);
-  }
-
   @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
   public void createUser(@RequestBody User user) throws SignetServiceException {
     userService.createUser(user);
   }
 
-  @GetMapping(value = "/role/{roleName}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/roles/{roleName}", produces = MediaType.APPLICATION_JSON_VALUE)
   public Role retrieveRoleByName(@PathVariable String roleName) throws SignetServiceException {
     return userService.retrieveRoleByName(roleName);
+  }
+
+  @PostMapping(value = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
+  public void createRole(@RequestBody Role role) throws SignetServiceException {
+    userService.createRole(role);
   }
 }

@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController()
-@RequestMapping("/signet/api/v1/om/orders")
+@RequestMapping("/api/v1/rmm/orders")
 public class OrderController {
 
   OrderService orderService;
