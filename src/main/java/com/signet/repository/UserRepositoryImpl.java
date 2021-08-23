@@ -67,8 +67,6 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public User retrieveUserByID(String userID) {
 
-    log.info("retrieveUser called with userID " + userID);
-
     StringBuffer sql = new StringBuffer()
       .append("select u.rmm_user_id, u.u_name, u.u_password, u.u_status, u.u_add_user_id, ")
       .append("       u.u_add_date, u.u_mtc_user_id, u.u_mtc_date, ")

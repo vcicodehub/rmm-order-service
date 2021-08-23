@@ -33,11 +33,11 @@ public class VendorRepositoryImpl implements VendorRepository {
   @Override
   public void deleteVendor(String id) {
     StringBuffer sql = new StringBuffer()
-      .append(" DELETE FROM rmm_vendor WHERE rmm_vendor_id = ?");
+      .append("DELETE FROM rmm_vendor WHERE rmm_vendor_id = ?");
 
     int numberOfRows = jdbcTemplate.update(sql.toString(), new BigDecimal(id));
 
-    log.info("Delete " + numberOfRows + " row(s) from om_vendor.");
+    log.info("Delete " + numberOfRows + " row(s) from rmm_vendor.");
   }
 
   @Override
