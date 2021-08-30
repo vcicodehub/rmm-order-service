@@ -3,6 +3,7 @@ package com.signet.util;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,6 +33,58 @@ public class DatabaseUtils {
   }
 
   /**
+   * Safely converts the given ID to an Integer safe for storing in PostgreSQL.
+   * @param columnName
+   * @param map
+   * @return String
+   */
+  public static Integer safeID(String id) {
+    if (id == null || id.isEmpty()) {
+      return 0;
+    }
+    return Integer.parseInt(id);
+  }
+
+  /**
+   * Safely converts the given Calendar to a Postgres Timestamp.
+   * @param columnName
+   * @param map
+   * @return String
+   */
+  public static Timestamp safeTimestamp(Calendar date) {
+    if (date == null) {
+      return null;
+    }
+
+    return new Timestamp(date.getTimeInMillis());
+  }
+
+  /**
+   * Safely converts the given char(1) to a boolean.
+   * @param columnName
+   * @param map
+   * @return String
+   */
+  public static boolean safeBoolean(String columnName, Map<String, Object> map) {
+    if (columnName == null || map == null || map.isEmpty()) {
+      return false;
+    }
+
+    String id = (String)map.get(columnName);
+    return id == null ? false : (id.equalsIgnoreCase("y") ? true : false);
+  }
+
+  /**
+   * Safely converts the given char(1) to a boolean.
+   * @param columnName
+   * @param map
+   * @return String
+   */
+  public static String safeBoolean(boolean boulean) {
+    return boulean ? "Y" : "N";
+  }
+
+  /**
    * Safely converts the given column that is defined as a Postgres 
    * NUMBER to a Sting.
    * @param columnName
@@ -42,9 +95,62 @@ public class DatabaseUtils {
     if (columnName == null || map == null || map.isEmpty()) {
       return null;
     }
-
     BigDecimal id = (BigDecimal)map.get(columnName);
     return id == null ? null : id.toString();
+  }
+
+  /**
+   * Safely converts the given String to an int.
+   * @param columnName
+   * @param map
+   * @return
+   */
+  public static int safeInt(String value) {
+    if (value == null || value.isEmpty()) {
+      return 0;
+    }
+    return Integer.parseInt(value);
+  }
+
+  /**
+   * Safely converts the given column to an int.
+   * @param columnName
+   * @param map
+   * @return int
+   */
+  public static int safeInt(String columnName, Map<String, Object> map) {
+    if (columnName == null || map == null || map.isEmpty()) {
+      return 0;
+    }
+    BigDecimal value = (BigDecimal)map.get(columnName);
+    return (value != null) ? value.intValue() : 0;
+  }
+
+  /**
+   * Safely converts the given column to a BigDecimal.
+   * @param columnName
+   * @param map
+   * @return
+   */
+  public static BigDecimal safeBigDecimal(String columnName, Map<String, Object> map) {
+    if (columnName == null || map == null || map.isEmpty()) {
+      return null;
+    }
+
+    BigDecimal value = (BigDecimal)map.get(columnName);
+    return value;
+  }
+
+  /**
+   * Safely converts the given column to a BigDecimal.
+   * @param value
+   * @return BigDecimal
+   */
+  public static BigDecimal safeBigDecimal(String value) {
+    if (value == null || value.isEmpty()) {
+      return null;
+    }
+    return new BigDecimal(value);
   }
 
   /**

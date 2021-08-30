@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EventRepositoryImpl implements EventRepository {
 
   @Autowired
-  @Qualifier("jdbcTemplateCompiere")
+  @Qualifier("jdbcTemplateRMM")
   JdbcTemplate jdbcTemplate;
 
   /**

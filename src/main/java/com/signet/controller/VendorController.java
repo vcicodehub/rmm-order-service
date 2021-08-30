@@ -5,6 +5,7 @@ import java.util.List;
 import com.signet.model.vendor.Vendor;
 import com.signet.service.VendorService;
 
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -53,8 +54,8 @@ public class VendorController {
   }
 
   @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Vendor createVendor(@RequestBody Vendor vendor) {
-    Vendor vendorList = vendorService.createVendor(vendor);
+  public Vendor createVendor(Authentication authentication, @RequestBody Vendor vendor) {
+    Vendor vendorList = vendorService.createVendor(authentication.getUsername(), vendor);
     return vendorList;
   }
 

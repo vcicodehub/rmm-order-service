@@ -20,9 +20,9 @@ public class VendorServiceImpl implements VendorService {
   }
 
   @Override
-  public Vendor createVendor(Vendor vendor) {
+  public Vendor createVendor(String userID, Vendor vendor) {
     log.info("createVendor()");
-    return vendorRepository.createVendor(vendor);
+    return vendorRepository.createVendor(userID, vendor);
   }
     
   @Override

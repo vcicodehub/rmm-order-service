@@ -29,7 +29,7 @@ public class DatabaseConfig {
       return DataSourceBuilder.create().build();
     }
 
-    @Bean(name = "jdbcTemplateCompiere")
+    @Bean(name = "jdbcTemplateRMM")
     public JdbcTemplate jdbcTemplate(@Qualifier("postgres") DataSource ds) {
      return new JdbcTemplate(ds);
     }

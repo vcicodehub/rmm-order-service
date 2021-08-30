@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ShopRepositoryImpl implements ShopRepository {
 
   @Autowired
-  @Qualifier("jdbcTemplateCompiere")
+  @Qualifier("jdbcTemplateRMM")
   JdbcTemplate jdbcTemplate;
 
   @Override

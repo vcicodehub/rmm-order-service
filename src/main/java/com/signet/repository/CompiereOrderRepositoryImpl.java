@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CompiereOrderRepositoryImpl implements CompiereOrderRepository {
 
   @Autowired
-  @Qualifier("jdbcTemplateCompiere")
+  @Qualifier("jdbcTemplateRMM")
   JdbcTemplate jdbcTemplate;
 
   /**
@@ -143,8 +143,8 @@ public class CompiereOrderRepositoryImpl implements CompiereOrderRepository {
       Product product = new Product();
       rowID = (Integer)map.get("M_PRODUCT_ID");
       product.setID(rowID.toString());
-      product.setUnitPrice((BigDecimal)map.get("PRICEACTUAL"));
-      product.setCategory((String)map.get("VALUE"));
+      product.setCost((BigDecimal)map.get("PRICEACTUAL"));
+      //product.setCategory((String)map.get("VALUE"));
       product.setDescription((String)map.get("DESCRIPTION"));
       
       lineItem.setProduct(product);

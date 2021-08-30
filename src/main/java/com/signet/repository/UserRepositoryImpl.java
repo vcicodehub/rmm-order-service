@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserRepositoryImpl implements UserRepository {
 
   @Autowired
-  @Qualifier("jdbcTemplateCompiere")
+  @Qualifier("jdbcTemplateRMM")
   JdbcTemplate jdbcTemplate;
 
   /**

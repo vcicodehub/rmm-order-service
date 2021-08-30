@@ -2,10 +2,8 @@ package com.signet.controller;
 
 import java.util.List;
 
-import com.signet.exceptions.SignetServiceException;
-import com.signet.model.order.Order;
-import com.signet.model.order.OrderLineItem;
-import com.signet.service.OrderService;
+import com.signet.model.Product;
+import com.signet.service.ProductService;
 
 import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Authentication;
 import org.springframework.http.HttpStatus;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,13 +21,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController()
-@RequestMapping("/api/v1/rmm/orders")
-public class OrderController {
+@RequestMapping("/api/v1/rmm/products")
+public class ProductController {
 
-  OrderService orderService;
+  ProductService productService;
 
-  public OrderController(OrderService orderService) {
-    this.orderService = orderService;
+  public ProductController(ProductService productService) {
+    this.productService = productService;
   }
 
   @ExceptionHandler(RuntimeException.class) 
@@ -41,26 +38,21 @@ public class OrderController {
   }
 
   @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Order retrieveOrderByID(@PathVariable String id) {
-    Order order = orderService.retrieveOrderByID(id);
-    return order;
+  public Product retrieveProductByID(@PathVariable String id) {
+    Product product = productService.retrieveProductByID(id);
+    return product;
   }
 
   @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Order createOrder(Authentication authentication, @RequestBody Order order) throws SignetServiceException {
-    orderService.createOrder(authentication.getUsername(), order);
-    return order;
-  }
-
-  @PutMapping(value = "/{orderID}/lineItems", produces = MediaType.APPLICATION_JSON_VALUE)
-  public OrderLineItem createOrderLineItem(Authentication authentication, @PathVariable String orderID, @RequestBody OrderLineItem orderLineItem) {
-    return orderService.createOrderLineItem(authentication.getUsername(), orderLineItem);
+  public Product createProduct(Authentication authentication, @RequestBody Product product) {
+    productService.createProduct(authentication.getUsername(), product);
+    return product;
   }
 
   @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-  public List<Order> searchOrders(@RequestBody Order order) {
-    List<Order> orderList = orderService.searchOrders(order);
-    return orderList;
+  public List<Product> searchProducts(@RequestBody Product product) {
+    List<Product> productList = productService.searchProducts(product);
+    return productList;
   }
 
 }

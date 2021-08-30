@@ -8,6 +8,7 @@ import com.signet.model.Product;
 public class OrderLineItem extends ModelObject {
     private static final long serialVersionUID = 1L;
     
+    private String orderID;
     private int lineNumber;
     private String productKey;
     private String supplyID;
@@ -19,6 +20,8 @@ public class OrderLineItem extends ModelObject {
     private int quantityInvoiced;
     private Product product;
 
+    public String getOrderID() { return orderID; }
+    public void setOrderID(String orderID) { this.orderID = orderID; }
     public int getLineNumber() { return lineNumber; }
     public void setLineNumber(int lineNumber) { this.lineNumber = lineNumber; }
     public String getProductKey() { return productKey; }
@@ -37,7 +40,12 @@ public class OrderLineItem extends ModelObject {
     public void setQuantityDelivered(int quantityDelivered) { this.quantityDelivered = quantityDelivered; }
     public int getQuantityInvoiced() { return quantityInvoiced; }
     public void setQuantityInvoiced(int quantityInvoiced) { this.quantityInvoiced = quantityInvoiced; }
+
     public Product getProduct() { return product; }
     public void setProduct(Product product) { this.product = product; }
+    public String getProductID() {
+      return product == null ? null : product.getID();
+    }
+    public void setProductID(String value) {}
     
 }

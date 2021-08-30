@@ -2,10 +2,13 @@ package com.signet.repository;
 
 import static com.signet.util.DatabaseUtils.mapModelObject;
 import static com.signet.util.DatabaseUtils.safeID;
+import static com.signet.util.DatabaseUtils.safeTimestamp;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 public class VendorRepositoryImpl implements VendorRepository {
 
   @Autowired
-  @Qualifier("jdbcTemplateCompiere")
+  @Qualifier("jdbcTemplateRMM")
   JdbcTemplate jdbcTemplate;
 
   @Override
@@ -41,39 +46,41 @@ public class VendorRepositoryImpl implements VendorRepository {
   }
 
   @Override
-  public Vendor createVendor(Vendor vendor) {
+  public Vendor createVendor(String userID, Vendor vendor) {
     StringBuffer sql = new StringBuffer()
-      .append(" INSERT INTO rmm_vendor ( ")
-      .append("rmm_vendor_id, v_type, v_status, v_number, v_name, v_email_addr, ")
-      .append("v_addr_line1, v_addr_line2, v_addr_city, v_addr_state, v_addr_zip, ")
-      .append("v_payterm_discount, v_payterm_net_date, v_payterm_net_days, ")
-      .append("v_add_user_id, v_add_date, v_mtc_user_id, v_mtc_date, v_last_copied_date")
-      .append(" VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?) ");
+      .append("INSERT INTO rmm_vendor ( ")
+      .append("  v_type, v_status, v_number, v_name, v_email_addr, ")
+      .append("  v_addr_line1, v_addr_line2, v_addr_city, v_addr_state, v_addr_zip, ")
+      .append("  v_payterm_discount, v_payterm_net_date, v_payterm_net_days, ")
+      .append("  v_add_user_id, v_add_date, v_mtc_user_id, v_mtc_date ")
+      .append("VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?) ");
 
-    Address address = vendor.getAddress();
-    jdbcTemplate.update(sql.toString(), 
-        new BigDecimal(vendor.getID()),
-        vendor.getType(),
-        vendor.getStatus(),
-        vendor.getNumber(),
-        vendor.getName(),
-        vendor.getEmailAddress(),
-        address.getLine1(),
-        address.getLine2(),
-        address.getCity(),
-        address.getState(),
-        address.getZip(),
-        vendor.getPaymentTermsDiscount(),
-        vendor.getPaymentTermsNetDate(),
-        vendor.getPaymentTermsNetDays(),
-        vendor.getAddUserID(),
-        vendor.getAddDate(),
-        vendor.getMtcUserID(),
-        vendor.getMtcDate(),
-        vendor.getLastCopiedDate());
+    KeyHolder keyHolder = new GeneratedKeyHolder();
+    jdbcTemplate.update(connection -> {
+      int index = 1;
+      PreparedStatement ps = connection.prepareStatement(sql.toString(), new String[] { "rmm_vendor_id" });
+        ps.setString(index++, vendor.getType());
+        ps.setString(index++, vendor.getStatus());
+        ps.setString(index++, vendor.getNumber());
+        ps.setString(index++, vendor.getName());
+        ps.setString(index++, vendor.getEmailAddress());
+        Address address = (vendor.getAddress() == null ? new Address() : vendor.getAddress());
+        ps.setString(index++, address.getLine1());
+        ps.setString(index++, address.getLine2());
+        ps.setString(index++, address.getCity());
+        ps.setString(index++, address.getState());
+        ps.setString(index++, address.getZip());
+        ps.setBigDecimal(index++, vendor.getPaymentTermsDiscount());
+        ps.setTimestamp(index++, safeTimestamp(vendor.getPaymentTermsNetDate()));
+        ps.setInt(index++, vendor.getPaymentTermsNetDays());
+        ps.setString(index++, userID);
+        ps.setTimestamp(index++, safeTimestamp(Calendar.getInstance()));
+        ps.setString(index++, userID);
+        ps.setTimestamp(index++, safeTimestamp(Calendar.getInstance()));
+        return ps;
+    }, keyHolder);
 
-    log.info("Created new vendor " + vendor.getID());
-
+    vendor.setID(keyHolder.getKey().toString());
     return vendor;
   }   
 
