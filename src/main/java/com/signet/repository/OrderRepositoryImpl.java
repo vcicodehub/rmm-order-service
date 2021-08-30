@@ -226,6 +226,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
       String orderID = safeID("rmm_order_id", map);
       if (orderID == null || !orderID.equals(currentOrderID)) {
+        currentOrderID = orderID;
         order = new Order();
         order.setID(safeID("rmm_order_id", map));
         order.setUserID((String)map.get("rmm_user_id"));
