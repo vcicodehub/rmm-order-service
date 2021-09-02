@@ -46,10 +46,9 @@ public class OrderRepositoryImpl implements OrderRepository {
     StringBuffer sql = new StringBuffer()
     .append("INSERT INTO rmm_order (rmm_user_id, rmm_shop_id, rmm_vendor_id, ")
     .append("       o_number, o_type, o_date, o_status, o_store_comment, o_is_received, o_is_delivered, ")
-    .append("       o_repair_job_num, o_approved_by, o_approved_by_date, o_contact_name, o_contact_phone, ")
-    .append("       o_bill_to, o_bill_to_location, ")
+    .append("       o_repair_job_num, o_approved_by, o_approved_by_date, ")
     .append("       o_add_user_id, o_add_date, o_mtc_user_id, o_mtc_date) ")
-    .append("VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?)");
+    .append("VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?)");
 
     KeyHolder keyHolder = new GeneratedKeyHolder();
     jdbcTemplate.update(connection -> {
@@ -68,10 +67,6 @@ public class OrderRepositoryImpl implements OrderRepository {
         ps.setString(index++, order.getRepairJobNumber());
         ps.setString(index++, order.getApprovedBy());
         ps.setTimestamp(index++, safeTimestamp(order.getApprovedByDate()));
-        ps.setString(index++, order.getContactName());
-        ps.setString(index++, order.getContactPhoneNumber());
-        ps.setString(index++, order.getBillTo());
-        ps.setString(index++, order.getBillToLocation());
         ps.setString(index++, userID);
         ps.setTimestamp(index++, safeTimestamp(Calendar.getInstance()));
         ps.setString(index++, userID);
@@ -108,10 +103,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     StringBuffer sql = new StringBuffer()
       .append("select o.rmm_order_id, rmm_user_id, rmm_shop_id, rmm_vendor_id, o_number, o_type, o_date, ")
       .append("o_status, o_store_comment, o_is_received, o_is_delivered, o_repair_job_num, ")
-      .append("o_approved_by, o_approved_by_date, o_contact_name, o_contact_phone, o_bill_to, o_bill_to_location, ")
+      .append("o_approved_by, o_approved_by_date, ")
       .append("o_add_user_id, o_add_date, o_mtc_user_id, o_mtc_date, o_last_copied_date, ")
       .append("i.rmm_order_line_item_id, oli_product_key, oli_description, ")
-      .append("oli_quantity, oli_uom, oli_line_num, oli_quantity_ordered, oli_quantity_delivered, oli_quantity_invoiced, ")
+      .append("oli_line_num, oli_quantity_ordered, oli_quantity_delivered, oli_quantity_invoiced, ")
       .append("oli_add_user_id, oli_add_date, oli_mtc_user_id, oli_mtc_date, oli_last_copied_date, ")
       .append("p.rmm_product_id, p_key, p_type, p_description, p_cost, ")
       .append("p_status, p_name, p_quality, p_cut, p_size, p_shape, p_size_carat, p_color, p_ster_quality, ")
@@ -142,10 +137,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     StringBuffer sql = new StringBuffer()
     .append("select o.rmm_order_id, rmm_user_id, rmm_shop_id, rmm_vendor_id, o_number, o_type, o_date, ")
     .append("o_status, o_store_comment, o_is_received, o_is_delivered, o_repair_job_num, ")
-    .append("o_approved_by, o_approved_by_date, o_contact_name, o_contact_phone, o_bill_to, o_bill_to_location, ")
+    .append("o_approved_by, o_approved_by_date, ")
     .append("o_add_user_id, o_add_date, o_mtc_user_id, o_mtc_date, o_last_copied_date, ")
     .append("i.rmm_order_line_item_id, oli_product_key, oli_description, ")
-    .append("oli_quantity, oli_uom, oli_line_num, oli_quantity_ordered, oli_quantity_delivered, oli_quantity_invoiced, ")
+    .append("oli_line_num, oli_quantity_ordered, oli_quantity_delivered, oli_quantity_invoiced, ")
     .append("oli_add_user_id, oli_add_date, oli_mtc_user_id, oli_mtc_date, oli_last_copied_date, ")
     .append("p.rmm_product_id, p_key, p_type, p_description, p_cost, ")
     .append("p_status, p_name, p_quality, p_cut, p_size, p_shape, p_size_carat, p_color, p_ster_quality, ")
@@ -183,10 +178,10 @@ public class OrderRepositoryImpl implements OrderRepository {
   public OrderLineItem createOrderLineItem(String userID, OrderLineItem orderLineItem) {
     StringBuffer sql = new StringBuffer()
     .append("insert into rmm_order_line_item (rmm_order_id, rmm_product_id, ")
-    .append("            oli_product_key, oli_description, oli_quantity, oli_uom, oli_line_num, ")
+    .append("            oli_product_key, oli_description, oli_line_num, ")
     .append("            oli_quantity_ordered, oli_quantity_delivered, oli_quantity_invoiced, ")
     .append("            oli_add_user_id, oli_add_date, oli_mtc_user_id, oli_mtc_date) ")
-    .append("values (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?)");
+    .append("values (?,?,?,?,?, ?,?,?,?,?, ?,?)");
 
     KeyHolder keyHolder = new GeneratedKeyHolder();
     jdbcTemplate.update(connection -> {
@@ -196,8 +191,6 @@ public class OrderRepositoryImpl implements OrderRepository {
         ps.setInt(index++, safeID(orderLineItem.getProductID()));
         ps.setString(index++, orderLineItem.getProductKey());
         ps.setString(index++, orderLineItem.getDescription());
-        ps.setInt(index++, orderLineItem.getQuantityOrdered());
-        ps.setString(index++, orderLineItem.getUnitOfMeasure());
         ps.setInt(index++, orderLineItem.getLineNumber());
         ps.setInt(index++, orderLineItem.getQuantityOrdered());
         ps.setInt(index++, orderLineItem.getQuantityDelivered());
@@ -228,7 +221,7 @@ public class OrderRepositoryImpl implements OrderRepository {
       if (orderID == null || !orderID.equals(currentOrderID)) {
         currentOrderID = orderID;
         order = new Order();
-        order.setID(safeID("rmm_order_id", map));
+        order.setID(orderID);
         order.setUserID((String)map.get("rmm_user_id"));
         order.setShopID(safeID("rmm_shop_id", map));
         order.setVendorID(safeID("rmm_vendor_id", map));
@@ -242,10 +235,6 @@ public class OrderRepositoryImpl implements OrderRepository {
         order.setRepairJobNumber((String)map.get("o_repair_job_num"));
         order.setApprovedBy((String)map.get("o_approved_by"));
         order.setApprovedByDate(convertDateStringToCalendar("o_approved_by_date", map));
-        order.setContactName((String)map.get("o_contact_name"));
-        order.setContactPhoneNumber((String)map.get("o_contact_phone"));
-        order.setBillTo((String)map.get("o_bill_to"));
-        order.setBillToLocation((String)map.get("o_bill_to_location"));
         mapModelObject(order, map, "o");
 
         orderList.add(order);
@@ -255,8 +244,6 @@ public class OrderRepositoryImpl implements OrderRepository {
       orderLineItem.setID(safeID("rmm_order_line_item_id", map));
       orderLineItem.setProductKey((String)map.get("oli_product_key"));
       orderLineItem.setDescription((String)map.get("oli_description"));
-      //orderLineItem.setQuantityOrdered((int)map.get("oli_quantity"));
-      orderLineItem.setUnitOfMeasure((String)map.get("oli_uom"));
       orderLineItem.setLineNumber(safeInt("oli_line_num", map));
       orderLineItem.setQuantityOrdered(safeInt("oli_quantity_ordered", map));
       orderLineItem.setQuantityDelivered(safeInt("oli_quantity_delivered", map));

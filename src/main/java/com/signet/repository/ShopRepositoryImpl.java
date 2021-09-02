@@ -107,7 +107,7 @@ public class ShopRepositoryImpl implements ShopRepository {
 
     List<Map<String, Object>> userDataList =  jdbcTemplate.query(
         sql.toString(), 
-        new Object[] { new BigDecimal(id) }, 
+        new Object[] { id }, 
         new int[] { Types.NUMERIC }, 
         new ColumnMapRowMapper());
 
@@ -174,7 +174,7 @@ public class ShopRepositoryImpl implements ShopRepository {
         shop.setAddress(address);
 
         // Standard columns
-        mapModelObject(shop, map, "oms");
+        mapModelObject(shop, map, "s");
 
         shopList.add(shop);
     }

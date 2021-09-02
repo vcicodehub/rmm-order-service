@@ -47,7 +47,7 @@ public class UserRepositoryImpl implements UserRepository {
       .append("select u.rmm_user_id, u.u_name, u.u_password, u.u_status, u.u_add_user_id, ")
       .append("       u.u_add_date, u.u_mtc_user_id, u.u_mtc_date,")
       .append("       r.rmm_role_id, r.ro_name, r.ro_status, r.ro_add_user_id, r.ro_add_date, ")
-      .append("       r.ro_mtc_user_id, r.ro_mtc_date, r.ro_last_copied_date ")
+      .append("       r.ro_mtc_user_id, r.ro_mtc_date ")
       .append("from rmm_user u, rmm_user_role ur, rmm_role r ")
       .append("where u.rmm_user_id = ur.rmm_user_id ")
       .append("  AND ur.rmm_role_id = r.rmm_role_id");
@@ -71,7 +71,7 @@ public class UserRepositoryImpl implements UserRepository {
       .append("select u.rmm_user_id, u.u_name, u.u_password, u.u_status, u.u_add_user_id, ")
       .append("       u.u_add_date, u.u_mtc_user_id, u.u_mtc_date, ")
       .append("       r.rmm_role_id, r.ro_name, r.ro_status, r.ro_add_user_id, r.ro_add_date, ")
-      .append("       r.ro_mtc_user_id, r.ro_mtc_date, r.ro_last_copied_date ")
+      .append("       r.ro_mtc_user_id, r.ro_mtc_date ")
       .append("from rmm_user u, rmm_user_role ur, rmm_role r ")
       .append("where u.rmm_user_id = ur.rmm_user_id ")
       .append("  AND ur.rmm_role_id = r.rmm_role_id ")
@@ -110,7 +110,7 @@ public class UserRepositoryImpl implements UserRepository {
     StringBuffer sql = new StringBuffer()
     .append(" INSERT INTO rmm_user (rmm_user_id, u_name, u_password, u_status, ")
     .append("     u_add_user_id, u_add_date, u_mtc_user_id, u_mtc_date) ")
-    .append(" VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    .append(" VALUES (?,?,?,?,?, ?,?,?)");
 
     jdbcTemplate.update(sql.toString(),
       user.getUserID(), 

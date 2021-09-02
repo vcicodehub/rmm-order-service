@@ -96,7 +96,7 @@ public class VendorRepositoryImpl implements VendorRepository {
       .append("rmm_vendor_id, v_type, v_status, v_number, v_name, v_email_addr, ")
       .append("v_addr_line1, v_addr_line2, v_addr_city, v_addr_state, v_addr_zip, ")
       .append("v_payterm_discount, v_payterm_net_date, v_payterm_net_days, ")
-      .append("v_add_user_id, v_add_date, v_mtc_user_id, v_mtc_date, v_last_copied_date ")      
+      .append("v_add_user_id, v_add_date, v_mtc_user_id, v_mtc_date ")      
       .append(" FROM rmm_vendor ");
     List<Map<String, Object>> userDataList =  jdbcTemplate.query(
         sql.toString(), 
@@ -118,7 +118,7 @@ public class VendorRepositoryImpl implements VendorRepository {
     .append("rmm_vendor_id, v_type, v_status, v_number, v_name, v_email_addr, ")
     .append("v_addr_line1, v_addr_line2, v_addr_city, v_addr_state, v_addr_zip, ")
     .append("v_payterm_discount, v_payterm_net_date, v_payterm_net_days, ")
-    .append("v_add_user_id, v_add_date, v_mtc_user_id, v_mtc_date, v_last_copied_date ")    
+    .append("v_add_user_id, v_add_date, v_mtc_user_id, v_mtc_date ")    
     .append(" FROM rmm_vendor ")
     .append(" WHERE rmm_vendor_id = ?");
 
@@ -150,7 +150,7 @@ public class VendorRepositoryImpl implements VendorRepository {
     .append("rmm_vendor_id, v_type, v_status, v_number, v_name, v_email_addr, ")
     .append("v_addr_line1, v_addr_line2, v_addr_city, v_addr_state, v_addr_zip, ")
     .append("v_payterm_discount, v_payterm_net_date, v_payterm_net_days, ")
-    .append("v_add_user_id, v_add_date, v_mtc_user_id, v_mtc_date, v_last_copied_date")    
+    .append("v_add_user_id, v_add_date, v_mtc_user_id, v_mtc_date ")    
     .append(" FROM rmm_vendor ")
     .append(" WHERE v_number = ?");
 

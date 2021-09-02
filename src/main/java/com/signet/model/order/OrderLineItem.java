@@ -13,7 +13,6 @@ public class OrderLineItem extends ModelObject {
     private String productKey;
     private String supplyID;
     private String description;
-    private String unitOfMeasure;
     private BigDecimal price;
     private int quantityOrdered;
     private int quantityDelivered;
@@ -30,8 +29,6 @@ public class OrderLineItem extends ModelObject {
     public void setSupplyID(String supplyID) { this.supplyID = supplyID; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    public String getUnitOfMeasure() { return unitOfMeasure; }
-    public void setUnitOfMeasure(String unitOfMeasure) { this.unitOfMeasure = unitOfMeasure; }
     public BigDecimal getPrice() { return price; }
     public void setPrice(BigDecimal price) { this.price = price; }
     public int getQuantityOrdered() { return quantityOrdered; }
